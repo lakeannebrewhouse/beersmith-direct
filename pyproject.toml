@@ -11,8 +11,10 @@ classifiers = ["License :: OSI Approved :: MIT License"]
 description-file = "README.md"
 requires-python = ">=3.9"
 requires = [
+    "aracnid-config",
     "aracnid-logger",
     "aracnid-utils",
+    "i-mongodb",
 ]
 keywords = "beersmith,mongodb"
 

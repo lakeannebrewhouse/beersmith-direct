@@ -13,8 +13,10 @@ flit = "*"
 pytest = "*"
 
 [packages]
+aracnid-config = "*"
 aracnid-logger = "*"
 aracnid-utils = "*"
+i-mongodb = "*"
 
 [requires]
 python_version = "3.9"

@@ -1,0 +1,9 @@
+__pycache__*
+*.code-workspace
+*.env
+*.egg-info/*
+dist/*
+certs/*
+temp/*
+pip.log
+.vscode/*

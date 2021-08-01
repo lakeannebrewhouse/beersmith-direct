@@ -1,0 +1,21 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "beersmith_direct"
+author = "Jason Romano"
+author-email = "aracnid@gmail.com"
+home-page = "https://github.com/lakeannebrewhouse/beersmith-direct"
+classifiers = ["License :: OSI Approved :: MIT License"]
+description-file = "README.md"
+requires-python = ">=3.9"
+requires = [
+    "aracnid-logger",
+    "aracnid-utils",
+]
+keywords = "beersmith,mongodb"
+
+[tools.flit.metadata.requires-extra]
+test = ["pytest ~=6.0"]
+build = ["flit ~=2.3"]

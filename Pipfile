@@ -16,10 +16,10 @@ pytest = "*"
 aracnid-config = "*"
 aracnid-logger = "*"
 aracnid-utils = "*"
-i-mongodb = "*"
-xmltodict = "*"
 beautifulsoup4 = "*"
 hjson = "*"
+i-mongodb = "*"
+xmltodict = "*"
 
 [requires]
 python_version = "3.9"

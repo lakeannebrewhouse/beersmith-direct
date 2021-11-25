@@ -14,7 +14,10 @@ requires = [
     "aracnid-config",
     "aracnid-logger",
     "aracnid-utils",
+    "beautifulsoup4",
+    "hjson",
     "i-mongodb",
+    "xmltodict"
 ]
 keywords = "beersmith,mongodb"
 

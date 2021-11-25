@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "default": {
+            "format": "[{asctime}] {levelname:8s} in {module}/{funcName}():: {message}",
+            "style": "{"
+        },
+        "deployed": {
+            "format": "{levelname:8s} in {module}/{funcName}():: {message}",
+            "style": "{"
+        },
+        "debug": {
+            "format": "[{asctime}] {levelname:8s} in {name}//{module}/{funcName}()[{lineno}]:: {message}",
+            "style": "{"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "default",
+            "stream": "ext://sys.stdout"
+        }
+    },
+    "loggers": {
+        "aracnid_config": {
+            "level": "WARNING"
+        }
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": ["console"]
+    }
+}

@@ -17,6 +17,9 @@ aracnid-config = "*"
 aracnid-logger = "*"
 aracnid-utils = "*"
 i-mongodb = "*"
+xmltodict = "*"
+beautifulsoup4 = "*"
+hjson = "*"
 
 [requires]
 python_version = "3.9"

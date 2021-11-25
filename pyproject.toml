@@ -21,3 +21,8 @@ keywords = "beersmith,mongodb"
 [tools.flit.metadata.requires-extra]
 test = ["pytest ~=6.0"]
 build = ["flit ~=2.3"]
+
+[tool.pytest.ini_options]
+addopts = "-p no:warnings"
+log_cli = true
+log_cli_level = "DEBUG"

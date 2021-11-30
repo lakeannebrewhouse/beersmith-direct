@@ -25,8 +25,8 @@ class Recipes(Connector):
         Sets up access to configuration properties.
 
         """
-        self.collection_name = 'recipes'
-        self.collection_name_raw = 'raw_recipes'
+        self.collection_name = os.environ.get('BEERSMITH_COLLECTION')
+        self.collection_name_raw = f'raw_{self.collection_name}'
         logger.debug(f'collection_name: {self.collection_name}')
         super().__init__(config_name=self.collection_name)
 

@@ -83,7 +83,7 @@ class Recipes(Connector):
             logger.warning('Recipe collection rebuilt, discrepancies found')
 
     def reset(self):
-        logger.debug('Resetting recipe collection...')
+        logger.debug('resetting recipe collection...')
         self.collection.drop()
 
         # reset props
@@ -129,14 +129,18 @@ class Recipes(Connector):
             save_last (bool): if set to True (default), details of the last
                 object retrieved is saved in the configuration properties
         """
+        # TODO: log recipe name, use progress bar
 
         # read the recipes from BeerSmith
+        logger.info('reading Beersmith recipes...')
         recipe_list = self.read_recipes(filename, path)
 
         # update each recipe
         update_count = 0
         for update_count, recipe in enumerate(recipe_list):
             self.update_recipe(recipe)
+
+            logger.info(f'updated recipe: {recipe.get("name")}')
 
             # update config properties
             if save_last:
@@ -190,38 +194,44 @@ class Recipes(Connector):
         """
         rebuild_recipes = False
 
+        # set default filename
+        if not filename:
+            filename = 'Archive.bsmx'
+        if not basepath:
+            basepath = self.bsm.default_path
+
         # read the archive
         archive_list = self.read_archive(filename, basepath)
 
         for archive in archive_list:
-            action_date = archive['date']
+            action_date = parse(archive['date']).astimezone()
 
-            if start and action_date < start.date().isoformat():
+            if start and action_date < start:
                 continue
 
-            if end and action_date > end.date().isoformat():
+            if end and action_date > end:
                 continue
             
             action = archive['action']
             filename = archive['file']
             directory = archive['directory']
-            archive_date = parse(archive['date'])
+            archive_date = parse(archive['date']).astimezone()
             logger.debug(f'[{archive_date}] {archive["name"]}: {action}')
 
-            # set recipe file path
-            if directory.startswith('/'):
-                directory = directory[1:]
-            path = os.path.join(basepath, directory)
+            # # set recipe file path
+            # if directory.startswith('/'):
+            #     directory = directory[1:]
+            # path = os.path.join(basepath, directory)
 
             if action in ('Add Recipe', 'Insert/Paste'):
-                recipe_list = self.read_recipes(filename, path)
+                recipe_list = self.read_recipes(filename, basepath)
                 recipe = recipe_list[0]
                 self.update_recipe(recipe)
 
                 logger.debug(f'\tprocessed: {action}')
 
             elif action in ('Edit', 'Move'):
-                recipe_list = self.read_recipes(filename, path)
+                recipe_list = self.read_recipes(filename, basepath)
                 recipe = recipe_list[0]
 
                 # confirm the recipe already exists
@@ -249,6 +259,11 @@ class Recipes(Connector):
                 logger.warning('\tCannot process "Paste" actions. Confirm that no duplicate recipes exist and rebuild the database.')
                 rebuild_recipes = True  # need to let user fix the condition first and manually rebuild
                 break
+
+            # update props
+            self.props.last_updated = archive_date
+            self.props.last_id = recipe_id
+            self.props.update()
 
         # reload the entire database if necessary
         if rebuild_recipes:

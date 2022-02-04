@@ -6,4 +6,4 @@ from beersmith_direct.i_beersmith import BeersmithInterface
 from beersmith_direct.recipes import Recipes
 
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'

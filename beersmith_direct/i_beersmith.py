@@ -189,7 +189,7 @@ class BeersmithInterface:
         readings_dict = self.flatten_data(props['agedata'], 'agedata', 'readings')
         self.strip_key_prefixes_list('f_ad_', readings_dict['readings'])
         props['ferment'].update(readings_dict)
-        props['ferment'].update(props.pop('agedata'))
+        props['ferment']['agedata'] = props.pop('agedata')
 
         # remove base key prefixes
         self.strip_key_prefixes('f_r_', props, props_new)

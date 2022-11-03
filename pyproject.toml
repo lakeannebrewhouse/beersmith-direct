@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "beersmith-direct"
-version = "1.2.1"
+version = "1.3.0"
 description = "Custom interface to Beersmith database"
 authors = ["Jason Romano <aracnid@gmail.com>"]
 license = "MIT"

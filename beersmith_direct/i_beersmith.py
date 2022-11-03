@@ -1,5 +1,9 @@
 """Class module to interface with Beersmith.
+
+TODO: add function docstrings
 """
+# pylint: disable=logging-fstring-interpolation,missing-function-docstring
+
 import os
 from collections import OrderedDict
 
@@ -18,7 +22,7 @@ class BeersmithInterface:
     """Interface to Beersmith.
 
     Attributes:
-        bsm: 
+        bsm:
     """
 
     def __init__(self) -> None:
@@ -29,6 +33,8 @@ class BeersmithInterface:
         """
         self.default_filename = os.environ.get('BEERSMITH_DEFAULT_FILENAME')
         self.default_path = os.environ.get('BEERSMITH_DEFAULT_PATH')
+        self.path = None
+        self.filename = None
 
     def read_bsmx(self, filename=None, path=None):
         """Reads a .bsmx file and returns a recipe folder of recipes.
@@ -46,7 +52,7 @@ class BeersmithInterface:
         # read the file
         filepath = os.path.join(self.path, self.filename)
         if os.path.exists(filepath):
-            with(open(filepath, 'r')) as bsmx_file:
+            with(open(filepath, 'r', encoding='UTF-8')) as bsmx_file:
                 xml_string = bsmx_file.read()
 
                 # replace some tag names from bsmx
@@ -117,7 +123,7 @@ class BeersmithInterface:
         archive_list = dict_items['archive']
 
         # process as list for one action
-        if type(archive_list) is OrderedDict:
+        if isinstance(archive_list, OrderedDict):
             archive_list = [archive_list]
 
         return archive_list
@@ -152,17 +158,19 @@ class BeersmithInterface:
         # initialize return variable
         props_new = {}
         props_new['_type'] = 'recipe'
-        
+
         # add recipe id
         props['_id'] = props['name']
         #print(props['name'])
 
         # add correct folder name
         # print('folder_name: {}'.format(folder_name))
-        props['folder_name'] = '/{}/'.format(folder_name)
+        props['folder_name'] = f'/{folder_name}/'.format(folder_name)
 
         # process sub data structures, flatten and remove key prefixes
-        ingredients_props, ingredients_list = self.process_ingredients(props['ingredients'].pop('data'))
+        ingredients_props, ingredients_list = self.process_ingredients(
+            props['ingredients'].pop('data')
+        )
         props['ingredients_by_type'] = ingredients_props
         props['ingredients'] = ingredients_list
 
@@ -218,7 +226,7 @@ class BeersmithInterface:
             # retrieve items
             items_old = props[tag_old]
 
-            if type(items_old) == list:
+            if isinstance(items_old, list):
                 items_new.extend(items_old)
             elif type(items_old) in (dict, OrderedDict):
                 items_new.append(items_old)
@@ -256,7 +264,7 @@ class BeersmithInterface:
     def process_ingredient(self, ingredient_props, ingredient_type):
         # initialize new ingredient dict
         props_new = {}
-        
+
         # determine the prefix, units
         if ingredient_type == 'grain':
             prefix = 'f_g_'
@@ -280,7 +288,7 @@ class BeersmithInterface:
 
         # add 'units' tag
         props_new['units'] = units
-        
+
         # rename f_order key
         if 'f_order' in ingredient_props:
             props_new['order'] = ingredient_props['f_order']
@@ -298,14 +306,14 @@ class BeersmithInterface:
             form_code = self.correct_type(props_new['form'])
             form_list = ['liquid', 'dry', 'slant', 'culture']
             props_new['form_text'] = form_list[form_code]
-            props_new['subtype'] = '{} yeast'.format(props_new['form_text'])
+            props_new['subtype'] = f'{props_new["form_text"]} yeast'
 
         elif ingredient_type == 'hops':
             form_code = self.correct_type(props_new['form'])
             form_list = ['pellet', 'plug', 'leaf', 'extract (CO2)', 'extract (isomerized)']
             props_new['form_text'] = form_list[form_code]
-            props_new['subtype'] = '{} hops'.format(props_new['form_text'])
-            
+            props_new['subtype'] = f'{props_new["form_text"]} hops'
+
         elif ingredient_type == 'misc':
             subtype_code = self.correct_type(props_new['type'])
             subtype_list = ['spice', 'fining', 'herb', 'flavor', 'other', 'water-agent']
@@ -355,7 +363,7 @@ class BeersmithInterface:
                 else:
                     props_to[key] = props_from[key]
         else:
-            print('strip_key_prefixes()-->cannot process {}'.format(type(props_from)))
+            print(f'strip_key_prefixes()-->cannot process {type(props_from)}')
 
     def strip_key_prefixes_list(self, prefix, props):
         item_num = 0
@@ -376,14 +384,13 @@ class BeersmithInterface:
             if units == 'oz':
                 amount /= 16
                 units = 'lbs'
-            
+
         return amount, units
 
+    @staticmethod
     def read_xml():
+        """Reads a BeerXML file and returns a RecipeFolder of recipes
         """
-        Reads a BeerXML file and returns a RecipeFolder of recipes
-        """
-        pass
 
     def correct_type(self, invar):
         # initialize return variable
@@ -391,7 +398,7 @@ class BeersmithInterface:
 
         if type(invar) in (dict, OrderedDict):
             outvar = self.correct_type_dict(invar)
-        elif type(invar) is list:
+        elif isinstance(invar, list):
             outvar = self.correct_type_list(invar)
 
         else:

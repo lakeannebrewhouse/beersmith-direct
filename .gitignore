@@ -1,9 +1,10 @@
 __pycache__*
-*.code-workspace
-*.env
-*.egg-info/*
-dist/*
-certs/*
-temp/*
-pip.log
+.coverage
 .vscode/*
+*.code-workspace
+*.egg-info/*
+*.env
+certs/*
+dist/*
+temp/*
+tests/cov.xml

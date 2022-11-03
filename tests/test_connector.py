@@ -1,14 +1,20 @@
+"""Tests connector functionality.
+"""
 import os
 
 import pytest
+from i_mongodb import MongoDBDatabase
 
 from beersmith_direct.connector import Connector
 
 
 def test_init_connector():
+    """Tests initializing connector.
+    """
     connector = Connector(config_name='beersmith')
 
     assert connector
+    assert isinstance(connector, Connector)
 
 @pytest.fixture(name='conn')
 def fixture_connector():
@@ -31,6 +37,7 @@ def test_init_connector_mongodb(conn):
     # test authentication
     mdb = conn.mdb
     assert mdb
+    assert isinstance(mdb, MongoDBDatabase)
 
     # verify database name
     db_name = os.environ.get('MONGODB_DBNAME')

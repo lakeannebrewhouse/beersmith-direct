@@ -1,5 +1,7 @@
 """Class module that connects to both Beersmith and MongoDB.
 """
+# pylint: disable=logging-fstring-interpolation
+
 from datetime import datetime
 import os
 
@@ -35,12 +37,14 @@ class Connector(MongoDBInterface):
         """Initializes the interfaces and instance attributes.
         """
         self.bsm = BeersmithInterface()
-        self.mdbi = MongoDBInterface.__init__(self)
+        MongoDBInterface.__init__(self)
+        self.mdb = MongoDBInterface().get_mdb()
 
+        # initialize configuration properties
         self.config_name = config_name
         if config_name:
             logger.debug(f'config_name: {self.config_name}')
-            self.props = Config(self.config_name, mdb=self.mdbi)
+            self.props = Config(self.config_name)
 
         self.set_start_min()
 

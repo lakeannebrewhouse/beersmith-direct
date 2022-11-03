@@ -1,5 +1,7 @@
 """Recipes classes.
 """
+# pylint: disable=logging-fstring-interpolation
+
 import os.path
 
 from dataclasses import dataclass
@@ -31,8 +33,8 @@ class Recipes(Connector):
         super().__init__(config_name=self.collection_name)
 
         # initialize MongoDB collection
-        self.collection = self.read_collection(self.collection_name)
-        self.collection_raw = self.read_collection(self.collection_name_raw)
+        self.collection = self.mdb.read_collection(self.collection_name)
+        self.collection_raw = self.mdb.read_collection(self.collection_name_raw)
 
     def pull(self, filename=None, path=None, save_last=True, **kwargs):
         """Pull updated recipes in MongoDB.
@@ -47,7 +49,7 @@ class Recipes(Connector):
         start, end = self.timespan(collection='beersmith', **kwargs)
         logger.debug(f'timespan: {start}, {end}')
 
-        archive_list = self.update_recipes_from_archive(
+        self.update_recipes_from_archive(
             filename=filename, basepath=path, start=start, end=end
         )
 
@@ -83,6 +85,8 @@ class Recipes(Connector):
             logger.warning('Recipe collection rebuilt, discrepancies found')
 
     def reset(self):
+        """Reset the recipe collection.
+        """
         logger.debug('resetting recipe collection...')
         self.collection.drop()
 
@@ -118,7 +122,8 @@ class Recipes(Connector):
         return archive_list
 
     def save_raw_recipe(self, recipe):
-        pass
+        """Save raw recipe.
+        """
 
     def update_recipes(self, filename=None, path=None, save_last=True):
         """Update recipes in MongoDB.
@@ -182,7 +187,7 @@ class Recipes(Connector):
             filter={'_id': recipe_id}
         )
 
-    def update_recipes_from_archive(self, 
+    def update_recipes_from_archive(self,
         filename='Archive.bsmx', basepath=None, start=None, end=None):
         """Updates a set of recipes from the recipe archive.
 
@@ -211,7 +216,7 @@ class Recipes(Connector):
 
             if end and action_date > end:
                 continue
-            
+
             action = archive['action']
             filename = archive['file']
             directory = archive['directory']
@@ -226,6 +231,7 @@ class Recipes(Connector):
             if action in ('Add Recipe', 'Insert/Paste'):
                 recipe_list = self.read_recipes(filename, basepath)
                 recipe = recipe_list[0]
+                recipe_id = recipe['name']
                 self.update_recipe(recipe)
 
                 logger.debug(f'\tprocessed: {action}')
@@ -243,10 +249,14 @@ class Recipes(Connector):
 
                 # if recipe was renamed, there is no way to find which was the source recipe
                 # need to reload the entire database
+                # should be able to rebuild automatically, unless renamed recipe is not unique
                 else:
-                    logger.debug('\tEditing recipe names cause database inconsistencies. The database will be rebuilt.')
+                    logger.debug(
+                        '\tEditing recipe names cause database inconsistencies. '
+                        'The database will be rebuilt.'
+                    )
                     # config.rebuild = True
-                    rebuild_recipes = True  # should be able to rebuild automatically, unless renamed recipe is not unique
+                    rebuild_recipes = True
                     break
 
             elif action == 'Delete/Cut':
@@ -254,10 +264,13 @@ class Recipes(Connector):
                 self.delete_recipe(recipe_id)
 
             elif action == 'Paste':
-                # this will create a twin record and there's no way of differentiating it with the original
-                # need to reload the entire database
-                logger.warning('\tCannot process "Paste" actions. Confirm that no duplicate recipes exist and rebuild the database.')
-                rebuild_recipes = True  # need to let user fix the condition first and manually rebuild
+                # This will create a twin record and there's no way of differentiating it with the
+                # original. Will need to rebuild the entire database.
+                logger.warning(
+                    '\tCannot process "Paste" actions. '
+                    'Confirm that no duplicate recipes exist and rebuild the database.'
+                )
+                rebuild_recipes = True
                 break
 
             # update props
@@ -273,6 +286,8 @@ class Recipes(Connector):
 
 @dataclass
 class Recipe:
+    """Recipe dataclass.
+    """
     name: str = 'default'
 
     def __init__(self) -> None:

@@ -8,15 +8,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-This package supports the following version of Python:
+This package supports the following version of Python. It probably supports older versions, but they have not been tested.
 
-- Python 3.9 or later
+- Python 3.10 or later
 
 ### Installing
 
-Install the latest package using pip. (We prefer pipenv.)
+Install the latest package using pip.
 
-```
+```bash
 $ pip install beersmith-direct
 ```
 
@@ -26,7 +26,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 Explain how to run the automated tests for this system
 
-```
+```bash
 $ python -m pytest
 ```
 

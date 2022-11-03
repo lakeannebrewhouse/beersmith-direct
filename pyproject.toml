@@ -1,31 +1,34 @@
+[tool.poetry]
+name = "beersmith-direct"
+version = "1.2.1"
+description = "Custom interface to Beersmith database"
+authors = ["Jason Romano <aracnid@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/lakeannebrewhouse/beersmith-direct"
+keywords = ["python", "mongodb", "beersmith"]
+packages = [{include = "beersmith_direct"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aracnid-config = "^1.0"
+aracnid-logger = "^1.0"
+aracnid-utils = "^1.0"
+beautifulsoup4 = "^4.0"
+hjson = "^3.0"
+i-mongodb = "^2.0"
+xmltodict = "^0.12"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.15"
+pytest = "^7.2"
+pytest-cov = "^4.0.0"
+
 [build-system]
-requires = ["flit_core >=2,<4"]
-build-backend = "flit_core.buildapi"
-
-[tool.flit.metadata]
-module = "beersmith_direct"
-author = "Jason Romano"
-author-email = "aracnid@gmail.com"
-home-page = "https://github.com/lakeannebrewhouse/beersmith-direct"
-classifiers = ["License :: OSI Approved :: MIT License"]
-description-file = "README.md"
-requires-python = ">=3.9"
-requires = [
-    "aracnid-config",
-    "aracnid-logger",
-    "aracnid-utils",
-    "beautifulsoup4",
-    "hjson",
-    "i-mongodb",
-    "xmltodict"
-]
-keywords = "beersmith,mongodb"
-
-[tools.flit.metadata.requires-extra]
-test = ["pytest ~=6.0"]
-build = ["flit ~=2.3"]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "-p no:warnings"
+addopts = "-p no:warnings --cov-report xml:tests/cov.xml --cov=i_mongodb tests/"
 log_cli = true
 log_cli_level = "DEBUG"
